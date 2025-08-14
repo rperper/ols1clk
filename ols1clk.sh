@@ -91,6 +91,7 @@ YUM='yum -q'
 mysqladmin='mysqladmin'
 mysql='mysql'
 MYGITHUBURL=https://raw.githubusercontent.com/litespeedtech/ols1clk/master/ols1clk.sh
+CONTAINERS=""
 
 function echoY
 {
@@ -259,6 +260,7 @@ function usage
     echoW " --owasp-enable                    " "To enable mod_security with OWASP rules. If OLS is installed, then enable the owasp directly"
     echoW " --owasp-disable                   " "To disable mod_security with OWASP rules."
     echoW " --fail2ban-enable                 " "To enable fail2ban for webadmin and wordpress login pages"
+    echoNW "  -C,    --containers             " "${EPACE} To activate LiteSpeed Containers"
     echoW " --proxy-r                         " "To set a proxy with rewrite type."
     echoW " --proxy-c                         " "To set a proxy with config type."
     echoNW "  -U,    --uninstall              " "${EPACE} To uninstall OpenLiteSpeed and remove installation directory."
@@ -282,7 +284,7 @@ function usage
 function display_license
 {
     echoY '**********************************************************************************************'
-    echoY '*                    Open LiteSpeed One click installation, Version 3.2                      *'
+    echoY '*                    Open LiteSpeed One click installation, Version 3.3                      *'
     echoY '*                    Copyright (C) 2016 - 2025 LiteSpeed Technologies, Inc.                  *'
     echoY '**********************************************************************************************'
 }
@@ -1807,6 +1809,14 @@ END
     if [ ${ADMINPORT} != 7080 ]; then
         config_admin_port
     fi
+    if [ "${CONTAINERS}" = "ON" ]; then
+        if [ ! -e '/sys/fs/cgroup/cgroup.controllers' ]; then
+            NS_ONLY='-o'
+        else
+            NS_ONLY=""
+        fi
+        "${SERVER_ROOT}"/lsns/bin/lssetup "${NS_ONLY}"
+    fi
 }
 
 function config_vh_wp
@@ -2619,6 +2629,9 @@ while [ ! -z "${1}" ] ; do
                     SET_fail2ban='ON'
                 fi    
                 ;;                                                                              
+        -[Cc] | --containers )
+                CONTAINERS="ON"
+                ;;
         -[Pp] | --purgeall )        
                 ACTION=PURGEALL
                 ;;

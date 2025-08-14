@@ -77,6 +77,7 @@ See below for additional options and usage examples.
 |      |   `--owasp-enable`  |             To enable mod_security with OWASP rules. If OLS is installed, then enable the owasp directly|
 |      |   `--owasp-disable`  |            To disable mod_security with OWASP rules.|    
 |      |   `--fail2ban-enable`  |         To enable fail2ban for webadmin and wordpress login pages.|
+| `-C` |   `--containers` |         To enable LiteSpeed Containers.|
 
 ### Control
 |  Opt |    Options    | Description|
