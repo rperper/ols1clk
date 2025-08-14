@@ -307,7 +307,11 @@ function check_os
         9)
             OSNAMEVER=CENTOS9
             OSVER=9
-            ;;            
+            ;;  
+        10)
+            OSNAMEVER=CENTOS10
+            OSVER=10
+            ;;          
         esac
     elif [ -f /etc/redhat-release ] ; then
         OSNAME=centos
@@ -325,6 +329,10 @@ function check_os
         9)
             OSNAMEVER=CENTOS9
             OSVER=9
+            ;;            
+        10)
+            OSNAMEVER=CENTOS10
+            OSVER=10
             ;;            
         esac             
     elif [ -f /etc/lsb-release ] ; then
@@ -382,7 +390,7 @@ function check_os
     fi
 
     if [ "$OSNAMEVER" = '' ] ; then
-        echoR "Sorry, currently one click installation only supports Centos(7-9), Debian(10-12) and Ubuntu(18,20,22,24)."
+        echoR "Sorry, currently one click installation only supports Centos(7-10), Debian(10-12) and Ubuntu(18,20,22,24)."
         echoR "You can download the source code and build from it."
         echoR "The url of the source code is https://github.com/litespeedtech/openlitespeed/releases."
         exit 1
@@ -424,7 +432,7 @@ function get_memory
 
 function check_memory
 {
-    if [ "${OSNAMEVER}" = 'CENTOS9' ]; then
+    if [ "${OSNAMEVER}" = 'CENTOS9' ] || [ "${OSNAMEVER}" = 'CENTOS10' ]; then
         get_memory
         if [ "$RAM_KB" -lt "1800000" ]; then
             echoR 'remi package needs at least 2GB RAM to install it. Exit!'
@@ -447,7 +455,7 @@ function install_ols_centos
         JSON=lsphp$LSPHPVER-json
     fi
 
-    if [ "${OSNAMEVER}" = 'CENTOS9' ]; then
+    if [ "${OSNAMEVER}" = 'CENTOS9' ] || [ "${OSNAMEVER}" = 'CENTOS10' ]; then
         echoB "${FPACE} - add remi repo"
     else
         echoB "${FPACE} - add epel repo"
@@ -852,7 +860,7 @@ function centos_install_mariadb
 #        fi 
 #    fi
     echoB "${FPACE} - Install MariaDB"
-    if [ "$OSNAMEVER" = "CENTOS8" ] || [ "$OSNAMEVER" = "CENTOS9" ]; then
+    if [ "$OSNAMEVER" = "CENTOS8" ] || [ "$OSNAMEVER" = "CENTOS9" ] || [ "$OSNAMEVER" = "CENTOS10" ]; then
         silent ${YUM} install -y boost-program-options
         silent ${YUM} --disablerepo=AppStream install -y MariaDB-server MariaDB-client
     else
@@ -864,7 +872,7 @@ function centos_install_mariadb
         exit 1
     fi
     echoB "${FPACE} - Start MariaDB"
-    if [ "$OSNAMEVER" = "CENTOS9" ] || [ "$OSNAMEVER" = "CENTOS8" ] || [ "$OSNAMEVER" = "CENTOS7" ] ; then
+    if [ "$OSNAMEVER" = "CENTOS10" ] || [ "$OSNAMEVER" = "CENTOS9" ] || [ "$OSNAMEVER" = "CENTOS8" ] || [ "$OSNAMEVER" = "CENTOS7" ] ; then
         silent systemctl enable mariadb
         silent systemctl start  mariadb
     else
@@ -875,7 +883,7 @@ function centos_install_mariadb
 function centos_install_mysql
 {
     echoB "${FPACE} - Add MySQL repo"
-    if [ "${OSVER}" = '9' ]; then 
+    if [ "${OSVER}" = '10' ] || [ "${OSVER}" = '9' ]; then 
         silent ${YUM} install -y https://dev.mysql.com/get/mysql80-community-release-el9-1.noarch.rpm    
     elif [ "${OSVER}" = '8' ]; then 
         silent ${YUM} install -y https://dev.mysql.com/get/mysql80-community-release-el8-4.noarch.rpm
