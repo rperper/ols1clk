@@ -78,6 +78,7 @@ See below for additional options and usage examples.
 |      |   `--owasp-disable`  |            To disable mod_security with OWASP rules.|    
 |      |   `--fail2ban-enable`  |         To enable fail2ban for webadmin and wordpress login pages.|
 | `-C` |   `--containers` |         To enable LiteSpeed Containers.|
+|      |   `--containers-disable`|         To disable LiteSpeed Containers without uninstalling LiteSpeed.|
 
 ### Control
 |  Opt |    Options    | Description|

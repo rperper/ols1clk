@@ -261,6 +261,7 @@ function usage
     echoW " --owasp-disable                   " "To disable mod_security with OWASP rules."
     echoW " --fail2ban-enable                 " "To enable fail2ban for webadmin and wordpress login pages"
     echoNW "  -C,    --containers             " "${EPACE} To activate LiteSpeed Containers"
+    echoW " --containers-disable              " "To disable LiteSpeed Containers without removing LiteSpeed"
     echoW " --proxy-r                         " "To set a proxy with rewrite type."
     echoW " --proxy-c                         " "To set a proxy with config type."
     echoNW "  -U,    --uninstall              " "${EPACE} To uninstall OpenLiteSpeed and remove installation directory."
@@ -1817,14 +1818,7 @@ END
     if [ ${ADMINPORT} != 7080 ]; then
         config_admin_port
     fi
-    if [ "${CONTAINERS}" = "ON" ]; then
-        if [ ! -e '/sys/fs/cgroup/cgroup.controllers' ]; then
-            NS_ONLY='-o'
-        else
-            NS_ONLY=""
-        fi
-        "${SERVER_ROOT}"/lsns/bin/lssetup "${NS_ONLY}"
-    fi
+    main_containers
 }
 
 function config_vh_wp
@@ -2230,6 +2224,25 @@ function main_owasp
         restart_lsws
         echoG "End Enable OWASP"
     fi
+}
+
+function main_containers
+{
+    if [ "${CONTAINERS}" = "ON" ]; then
+        echoG "Enable LiteSpeed Containers"
+        if [ ! -e '/sys/fs/cgroup/cgroup.controllers' ]; then
+            "${SERVER_ROOT}"/lsns/bin/lssetup -o
+        else
+            "${SERVER_ROOT}"/lsns/bin/lssetup
+        fi
+    fi
+}
+
+function disable_containers
+{
+    echo "Disable LiteSpeed Containers"
+    "${SERVER_ROOT}"/lsns/bin/lssetup -d
+    restart_lsws  
 }
 
 function install_wp_cli
@@ -2639,6 +2652,16 @@ while [ ! -z "${1}" ] ; do
                 ;;                                                                              
         -[Cc] | --containers )
                 CONTAINERS="ON"
+                if [ -e ${WEBCF} ]; then
+                    main_containers
+                    exit 0
+                fi    
+                ;;
+        --containers-disable )
+                if [ -e ${WEBCF} ]; then
+                    disable_containers
+                    exit 0
+                fi
                 ;;
         -[Pp] | --purgeall )        
                 ACTION=PURGEALL
