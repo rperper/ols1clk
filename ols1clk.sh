@@ -2652,6 +2652,10 @@ while [ ! -z "${1}" ] ; do
                 ;;                                                                              
         -[Cc] | --containers )
                 CONTAINERS="ON"
+                if [ -e ${WEBCF} ]; then
+                    main_containers
+                    exit 0
+                fi    
                 ;;
         --containers-disable )
                 if [ -e ${WEBCF} ]; then
